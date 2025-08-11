@@ -1,4 +1,4 @@
-import { Proposal, Scope } from "./sanitize";
+import type { Proposal, Scope } from "./sanitize";
 import { useMemo } from "react";
 
 export const currencyFmt = (n: number, currency = "USD") => {
