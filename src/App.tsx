@@ -62,7 +62,11 @@ export default function App() {
               Project: <strong>{proposal.project.name}</strong> • Bid Date: <strong>{proposal.project.bidDate || "—"}</strong>
             </div>
           </div>
-          <ScopeEditor scope={activeScope} onChange={(s) => updateScope(0, s)} />
+          <ScopeEditor
+            scope={activeScope}
+            onChange={(s) => updateScope(0, s)}
+            currency={proposal.commercialTerms.currency}
+          />
         </>
       ) : (
         <div className="bg-white p-6 rounded-lg border border-gray-200">

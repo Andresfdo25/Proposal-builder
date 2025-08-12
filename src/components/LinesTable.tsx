@@ -1,5 +1,6 @@
 import { NumberInput, TextInput, Button } from "./UI";
 import type { LineItem } from "../lib/sanitize";
+import { currencyFmt } from "../lib/totals";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -8,6 +9,7 @@ type Props = {
   items: LineItem[];
   onChange: (items: LineItem[]) => void;
   showTotals?: boolean;
+  currency?: string;
 };
 
 const lineTotal = (it: LineItem) =>
@@ -18,6 +20,7 @@ export default function LinesTable({
   items,
   onChange,
   showTotals = true,
+  currency = "USD",
 }: Props) {
   const safeItems = items || [];
 
@@ -95,10 +98,7 @@ export default function LinesTable({
                   />
                 </td>
                 <td className="px-3 py-2 align-top text-right tabular-nums">
-                  {lineTotal(it).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
+                  {currencyFmt(lineTotal(it), currency)}
                 </td>
                 <td className="px-3 py-2 align-top text-right">
                   <Button variant="ghost" onClick={() => remove(it.id)}>
@@ -122,10 +122,7 @@ export default function LinesTable({
                   Subtotal
                 </td>
                 <td className="px-3 py-2 text-right font-semibold tabular-nums">
-                  {sum.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
+                  {currencyFmt(sum, currency)}
                 </td>
                 <td></td>
               </tr>

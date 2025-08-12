@@ -17,11 +17,12 @@ const TRADE_OPTIONS = [
 type Props = {
   scope: Scope;
   onChange: (scope: Scope) => void;
+  currency: string;
 };
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-export default function ScopeEditor({ scope, onChange }: Props) {
+export default function ScopeEditor({ scope, onChange, currency }: Props) {
   const update = (patch: Partial<Scope>) => onChange({ ...scope, ...patch });
 
   const updateArrayText = (key: "inclusions" | "exclusions", v: string) =>
@@ -120,18 +121,21 @@ export default function ScopeEditor({ scope, onChange }: Props) {
           title="Direct Pricing Items"
           items={scope.pricingItems || []}
           onChange={(items) => updateLines("pricingItems", items)}
+          currency={currency}
         />
         <Divider />
         <LinesTable
           title="Service"
           items={scope.services || []}
           onChange={(items) => updateLines("services", items)}
+          currency={currency}
         />
         <Divider />
         <LinesTable
           title="General Conditions"
           items={scope.generalConditions || []}
           onChange={(items) => updateLines("generalConditions", items)}
+          currency={currency}
         />
       </Section>
 
