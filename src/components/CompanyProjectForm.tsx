@@ -49,6 +49,36 @@ export default function CompanyProjectForm({
           <TextInput label="Contact" value={company.contact || ""} onChange={(v) => setCompany({ contact: v })} />
           <TextInput label="Address" value={company.address || ""} onChange={(v) => setCompany({ address: v })} />
         </Row>
+        <Row cols={2}>
+          <TextInput label="Logo URL" value={company.logoUrl || ""} onChange={(v) => setCompany({ logoUrl: v })} />
+          <label className="block">
+            <div className="text-sm font-medium mb-1">Logo File</div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => setCompany({ logoUrl: reader.result as string });
+                reader.readAsDataURL(file);
+              }}
+              className="w-full text-sm"
+            />
+            {company.logoUrl && (
+              <div className="mt-2">
+                <img src={company.logoUrl} alt="Logo preview" className="h-16" />
+                <button
+                  type="button"
+                  className="mt-1 text-xs text-red-600"
+                  onClick={() => setCompany({ logoUrl: "" })}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </label>
+        </Row>
       </Section>
 
       <Section title="Project">

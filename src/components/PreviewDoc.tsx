@@ -18,11 +18,17 @@ export default function PreviewDoc({ proposal }: { proposal: Proposal }) {
           </p>
         </div>
         <div className="text-right">
+          {company.logoUrl ? (
+            <img
+              src={company.logoUrl}
+              alt={`${company.name || "Company"} logo`}
+              className="ml-auto mb-2 h-16 w-auto"
+            />
+          ) : null}
           <div className="font-semibold">{company.name || "Company"}</div>
           <div className="text-sm">{company.address}</div>
           <div className="text-sm">{company.phone}</div>
           <div className="text-sm">{company.email}</div>
-          <div className="text-sm">{company.website}</div>
         </div>
       </header>
 

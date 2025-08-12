@@ -46,7 +46,7 @@ export type Proposal = {
     email?: string;
     website?: string;
     contact?: string;
-    logoDataUrl?: string;
+    logoUrl?: string;
   };
   client: { name?: string; contact?: string; email?: string; phone?: string; address?: string };
   project: { name?: string; number?: string; location?: string; bidDate?: string };
@@ -88,12 +88,12 @@ const newId = () =>
 
 const COMPANY_DEFAULT = {
   name: "Del Ray Glass",
-  address: "",
-  phone: "",
-  email: "",
-  website: "",
+  address: "1234 Glass Ave, Alexandria, VA",
+  phone: "(703) 555-0123",
+  email: "estimating@delrayglass.com",
+  website: "delrayglass.com",
   contact: "",
-  logoDataUrl: "",
+  logoUrl: "/vite.svg",
 };
 
 export const DEFAULT_PROPOSAL: Proposal = {
