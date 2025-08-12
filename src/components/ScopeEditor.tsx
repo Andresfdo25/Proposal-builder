@@ -123,7 +123,7 @@ export default function ScopeEditor({ scope, onChange }: Props) {
         />
         <Divider />
         <LinesTable
-          title="Service"
+          title="Services"
           items={scope.services || []}
           onChange={(items) => updateLines("services", items)}
         />
