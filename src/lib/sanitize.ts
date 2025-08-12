@@ -82,8 +82,8 @@ export const TRADE_PRESETS = [
 
 // robust id generator (works even if crypto is not available)
 const newId = () =>
-  (globalThis as any)?.crypto?.randomUUID
-    ? (globalThis as any).crypto.randomUUID()
+  globalThis.crypto?.randomUUID
+    ? globalThis.crypto.randomUUID()
     : Math.random().toString(36).slice(2, 10);
 
 const COMPANY_DEFAULT = {
@@ -127,57 +127,69 @@ export const DEFAULT_PROPOSAL: Proposal = {
 
 // ---------- helpers ----------
 const toStrArray = (v: unknown): string[] => {
-  if (Array.isArray(v)) return v.filter((x) => typeof x === "string") as string[];
+  if (Array.isArray(v)) return v.map((x) => String(x).trim()).filter(Boolean);
   if (typeof v === "string") return v.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
   return [];
 };
 
 const toLineArray = (arr: unknown): LineItem[] => {
   if (!Array.isArray(arr)) return [];
-  return arr.map((x: any) => ({
-    id: x?.id || newId(),
-    description: String(x?.description ?? ""),
-    unit: String(x?.unit ?? "LS"),
-    qty: Number.isFinite(+x?.qty) ? +x.qty : 1,
-    unitRate: Number.isFinite(+x?.unitRate) ? +x.unitRate : 0,
+  return (arr as Array<Partial<LineItem>>).map((x) => ({
+    id: typeof x.id === "string" ? x.id : newId(),
+    description: String(x.description ?? ""),
+    unit: String(x.unit ?? "LS"),
+    qty: Number.isFinite(Number(x.qty)) ? Number(x.qty) : 1,
+    unitRate: Number.isFinite(Number(x.unitRate)) ? Number(x.unitRate) : 0,
   }));
 };
 
 const toAltsArray = (arr: unknown): Alternate[] => {
   if (!Array.isArray(arr)) return [];
-  return arr.map((a: any) => ({
-    id: a?.id || newId(),
-    label: String(a?.label ?? "Alt #"),
-    description: String(a?.description ?? ""),
-    addOrDeduct: a?.addOrDeduct === "DEDUCT" ? "DEDUCT" : "ADD",
-    amount: Number.isFinite(+a?.amount) ? +a.amount : 0,
+  return (arr as Array<Partial<Alternate>>).map((a) => ({
+    id: typeof a.id === "string" ? a.id : newId(),
+    label: String(a.label ?? "Alt #"),
+    description: String(a.description ?? ""),
+    addOrDeduct: a.addOrDeduct === "DEDUCT" ? "DEDUCT" : "ADD",
+    amount: Number.isFinite(Number(a.amount)) ? Number(a.amount) : 0,
   }));
 };
 
-export function sanitizeScope(s: any): Scope {
-  const trade = (TRADE_PRESETS as readonly string[]).includes(s?.trade) ? s.trade : "Storefront";
+export function sanitizeScope(scope: unknown): Scope {
+  const s = scope as Partial<Scope>;
+  const trade = (TRADE_PRESETS as readonly string[]).includes((s.trade as string) ?? "")
+    ? (s.trade as string)
+    : "Storefront";
   return {
-    id: s?.id || newId(),
+    id: s.id || newId(),
     trade,
-    title: String(s?.title ?? `${trade} Scope`),
-    system: String(s?.system ?? ""),
-    finish: String(s?.finish ?? ""),
-    glassSpec: String(s?.glassSpec ?? ""),
-    performance: typeof s?.performance === "object" && s?.performance !== null ? s.performance : {},
-    structural: typeof s?.structural === "object" && s?.structural !== null ? s.structural : {},
-    inclusions: toStrArray(s?.inclusions),
-    exclusions: toStrArray(s?.exclusions),
-    notes: String(s?.notes ?? ""),
-    schedule: typeof s?.schedule === "object" && s?.schedule !== null ? s.schedule : {},
-    pricingItems: toLineArray(s?.pricingItems),
-    services: toLineArray(s?.services),
-    generalConditions: toLineArray(s?.generalConditions),
-    alternates: toAltsArray(s?.alternates),
+    title: String(s.title ?? `${trade} Scope`),
+    system: String(s.system ?? ""),
+    finish: String(s.finish ?? ""),
+    glassSpec: String(s.glassSpec ?? ""),
+    performance:
+      typeof s.performance === "object" && s.performance !== null
+        ? (s.performance as Scope["performance"])
+        : {},
+    structural:
+      typeof s.structural === "object" && s.structural !== null
+        ? (s.structural as Scope["structural"])
+        : {},
+    inclusions: toStrArray(s.inclusions),
+    exclusions: toStrArray(s.exclusions),
+    notes: String(s.notes ?? ""),
+    schedule:
+      typeof s.schedule === "object" && s.schedule !== null
+        ? (s.schedule as Record<string, string>)
+        : {},
+    pricingItems: toLineArray(s.pricingItems),
+    services: toLineArray(s.services),
+    generalConditions: toLineArray(s.generalConditions),
+    alternates: toAltsArray(s.alternates),
   };
 }
 
-export function sanitizeProposal(p: any): Proposal {
-  const cp: Proposal = { ...DEFAULT_PROPOSAL, ...(p || {}) } as Proposal;
+export function sanitizeProposal(p: unknown): Proposal {
+  const cp: Proposal = { ...DEFAULT_PROPOSAL, ...(p as Partial<Proposal> || {}) } as Proposal;
   cp.id = cp.id || newId();
   cp.company = { ...DEFAULT_PROPOSAL.company, ...(cp.company || {}) };
   cp.client = { ...DEFAULT_PROPOSAL.client, ...(cp.client || {}) };

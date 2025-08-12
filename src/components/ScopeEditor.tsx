@@ -25,12 +25,17 @@ export default function ScopeEditor({ scope, onChange }: Props) {
   const update = (patch: Partial<Scope>) => onChange({ ...scope, ...patch });
 
   const updateArrayText = (key: "inclusions" | "exclusions", v: string) =>
-    update({ [key]: v.split(/\r?\n/).map((s) => s.trim()).filter(Boolean) } as any);
+    onChange({
+      ...scope,
+      [key]: v.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
+    });
 
-  const updateLines = (key: "pricingItems" | "services" | "generalConditions", items: LineItem[]) =>
-    update({ [key]: items } as any);
+  const updateLines = (
+    key: "pricingItems" | "services" | "generalConditions",
+    items: LineItem[],
+  ) => onChange({ ...scope, [key]: items });
 
-  const updateAlts = (items: Alternate[]) => update({ alternates: items });
+  const updateAlts = (items: Alternate[]) => onChange({ ...scope, alternates: items });
 
   // safe defaults
   const inclusions = (scope.inclusions || []).join("\n");
