@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { DEFAULT_PROPOSAL, sanitizeScope, type Proposal, type Scope } from "./lib/sanitize";
 import ScopeEditor from "./components/ScopeEditor";
 import PreviewDoc from "./components/PreviewDoc";
-import { Button } from "./components/UI";
+import { Button, Section } from "./components/UI";
+import CompanyProjectForm from "./components/CompanyProjectForm";
 
 const seedScope: Scope = sanitizeScope({
   trade: "Storefront",
@@ -22,7 +23,14 @@ export default function App() {
   const [proposal, setProposal] = useState<Proposal>(() => ({
     ...DEFAULT_PROPOSAL,
     name: "Maple Ridge Office Renovation",
-    company: { ...DEFAULT_PROPOSAL.company, name: "Del Ray Glass", phone: "(703) 555-0123", email: "estimating@delrayglass.com" },
+    company: {
+      ...DEFAULT_PROPOSAL.company,
+      name: "Del Ray Glass",
+      phone: "(703) 555-0123",
+      email: "estimating@delrayglass.com",
+      website: "delrayglass.com",
+      address: "1234 Glass Ave, Alexandria, VA",
+    },
     project: { name: "Maple Ridge Office", number: "MR-042", location: "Arlington, VA", bidDate: "2025-08-20" },
     scopes: [seedScope],
   }));
@@ -57,11 +65,17 @@ export default function App() {
 
       {activeTab === "build" ? (
         <>
+          <Section title="Company & Project">
+            <CompanyProjectForm proposal={proposal} onChange={setProposal} />
+          </Section>
+
           <div className="mb-4">
             <div className="text-sm text-gray-600">
-              Project: <strong>{proposal.project.name}</strong> • Bid Date: <strong>{proposal.project.bidDate || "—"}</strong>
+              Project: <strong>{proposal.project.name || "—"}</strong> • Bid Date:{" "}
+              <strong>{proposal.project.bidDate || "—"}</strong>
             </div>
           </div>
+
           <ScopeEditor
             scope={activeScope}
             onChange={(s) => updateScope(0, s)}
@@ -82,3 +96,4 @@ export default function App() {
     </div>
   );
 }
+
